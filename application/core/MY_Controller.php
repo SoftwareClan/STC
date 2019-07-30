@@ -18,15 +18,15 @@ class MY_Controller extends CI_Controller {
         if (uri_string() == "login") {
             return;
         } else {
-            if (isset($this->session->auth)) {
-                $auth_array = $this->session->auth;
-                $token = $auth_array["token"];
-                $auth_client = $auth_array["auth_client"];
-                $client_service = $auth_array["client_service"];
-                $auth_key = $auth_array["auth_key"];
-                $user_type = $auth_array["user_type"];
+            if (!is_null($this->input->post_get('token')) && !is_null($this->input->post_get('user_key')) && !is_null($this->input->post_get('user_type')) && !is_null($this->input->post_get('auth_client')) && !is_null($this->input->post_get('client_service')) && !is_null($this->input->post_get('auth_key'))) {
+                $token = $this->input->post_get("token");
+                $auth_client = $this->input->post_get("auth_client");
+                $client_service = $this->input->post_get("client_service");
+                $auth_key = $this->input->post_get("auth_key");
+                $user_key = $this->input->post_get("user_key");
+                $user_type = $this->input->post_get("user_type");
                 if ($user_type == "super_admin") {
-                    return true;
+                    return;
                 } else {
                     if ($this->request_auth($client_service, $auth_key)) {
                         if ($this->token_auth($auth_client, $token, $user_type)) {
@@ -39,30 +39,31 @@ class MY_Controller extends CI_Controller {
                     }
                 }
             } else {
-                if (!is_null(base64_decode($this->input->post_get('token'))) && !is_null(base64_decode($this->input->post_get('user_key'))) && !is_null(base64_decode($this->input->post_get('auth_client'))) && !is_null(base64_decode($this->input->post_get('client_service'))) && !is_null(base64_decode($this->input->post_get('auth_key')))) {
-                    $token = base64_decode($this->input->post_get("token"));
-                    $auth_client = base64_decode($this->input->post_get("auth_client"));
-                    $client_service = ($this->input->post_get("client_service"));
-                    $auth_key = base64_decode($this->input->post_get("auth_key"));
-                    $user_type = base64_decode($this->input->post_get("user_key"));
-                    if ($user_type == "super_admin") {
-                        return;
-                    } else {
-                        if ($this->request_auth($client_service, $auth_key)) {
-                            if ($this->token_auth($auth_client, $token, $user_type)) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        } else {
-                            return false;
-                        }
-                    }
-                } else {
-//                    json_output(401, 'bad request from auth');
-                    return false;
-                }
+                json_output(401, 'bad request from auth');
             }
+        }
+    }
+
+    public function getUserDetails() {
+        if (isset($this->session->auth)) {
+            $auth_array = $this->session->auth;
+            $user['token'] = $auth_array["token"];
+            $user['auth_client'] = $auth_array["auth_client"];
+            $user['client_service'] = $auth_array["client_service"];
+            $user['auth_key'] = $auth_array["auth_key"];
+            $user['user_type'] = $auth_array["user_type"];
+            $this->load->model('FirmModel');
+            $result = $this->FirmModel->get_query(array('id' => $auth_array["auth_client"], "status" => 1));
+            if (count($result) > 0) {
+                $user["name"] = $result[0]->name;
+                $user["username"] = $result[0]->username;
+                $user["contact"] = $result[0]->contact;
+                $user["email"] = $result[0]->email;
+                $user["no_of_users"] = $result[0]->no_of_users;
+            }
+            return $user;
+        } else {
+            return false;
         }
     }
 
@@ -73,8 +74,7 @@ class MY_Controller extends CI_Controller {
                 return true;
             }
         } else {
-            return false;
-//            json_output(401, 'bad request token_auth');
+            json_output(401, 'bad request token_auth');
         }
     }
 
@@ -87,18 +87,11 @@ class MY_Controller extends CI_Controller {
     }
 
     public function request_auth($client_service, $auth_key) {
-
-
-        if ($client_service != null && $auth_key != null) {
-            $check_auth_client = $this->AuthModel->check_auth_client($client_service, $auth_key);
-            if ($check_auth_client != true) {
-                die($this->output->get_output());
-            } else {
-                return true;
-            }
+        $check_auth_client = $this->AuthModel->check_auth_client($client_service, $auth_key);
+        if ($check_auth_client != true) {
+            die($this->output->get_output());
         } else {
-            return false;
-            //json_output(401, array("status" => 401, "message" => array($client_service, $auth_key)));
+            return true;
         }
     }
 

@@ -62,14 +62,14 @@ function showNotification(from, align, icon, message, type) {
 
 function getFormData(form) {
 
-    var client_service = encypt("frontend-client");
-    var auth_key = encypt("stchexaclan");
+    var client_service ="frontend-client";
+    var auth_key = "stchexaclan";
     var json = '{"client_service": "' + client_service + '","auth_key": "' + auth_key + '"}';
     var object = JSON.parse(json);
     
     for (var i = 0; i < form.length - 1; i++) {
         if (form[i].value !== "") {
-            object[form[i].name] = encypt(form[i].value);
+            object[form[i].name] = form[i].value;
         }
     }
     return object;
@@ -77,16 +77,15 @@ function getFormData(form) {
 
 function getFormData(form,token,user_key,user_type) {
 
-    var client_service = encypt("frontend-client");
-    var auth_key = encypt("stchexaclan");
+    var client_service = "frontend-client";
+    var auth_key = "stchexaclan";
     var json = '{"client_service": "' + client_service + '","auth_key": "' + auth_key + '","token": "' 
-            + encypt(token) + '","auth_client": "' + encypt(user_key) 
-            + '","user_type": "' + encypt(user_type) + '"}';
-    var object = JSON.parse(json);
-    
+            + token + '","auth_client": "' + user_key 
+            + '","user_type": "' + user_type + '","user_key": "' + user_key + '"}';
+    var object = JSON.parse(json);    
     for (var i = 0; i < form.length - 1; i++) {
         if (form[i].value !== "") {
-            object[form[i].name] = encypt(form[i].value);
+            object[form[i].name] = form[i].value;
         }
     }
     console.log(object);
@@ -94,8 +93,8 @@ function getFormData(form,token,user_key,user_type) {
 }
 
 function getRequestData() {
-    var client_service = encypt("frontend-client");
-    var auth_key = encypt("stchexaclan-client");
+    var client_service = "frontend-client";
+    var auth_key = "stchexaclan-client";
     var json = '{"client_service": "' + client_service + '","auth_key": "' + auth_key + '"}';
     var object = JSON.parse(json);
     return object;
@@ -120,12 +119,12 @@ function getAjax(u_url, u_data) {
     return request;
 }
 
-function load_table(url,data) {
+function load_table(url,data,tbody,table) {
     var request = getAjax(url, data);
     request.done(function (success) {
-        $('#firm_list_tbody').empty();
-        $('#firm_list_tbody').append(success['data_table']);
-        $('#firm_list_table').DataTable();
+        $('#'+tbody).empty();
+        $('#'+tbody).append(success['data_table']);
+        $('#'+table).DataTable();
     });
 
     request.fail(function (error) {

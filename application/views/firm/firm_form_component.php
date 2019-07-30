@@ -114,6 +114,7 @@
 if (isset($this->session->auth)) {
     $session_data = $this->session->auth;
     $user_type = $session_data['user_type'];
+    $user_key = $session_data["auth_client"];
     $token = $session_data['token'];
     $auth_client = $session_data['auth_client'];
 }
@@ -123,11 +124,12 @@ if (isset($this->session->auth)) {
 
 
 
-    var url = "<?= base_url() ?>firm_list";
+    var url = "<?= base_url("firm_list") ?>";
+
     var user_type = '<?= $user_type ?>';
     var token = '<?= $token ?>';
     var auth_client = '<?= $auth_client ?>';
-
+    var user_key = '<?= $user_key ?>'
 
     $(document).ready(function () {
 
@@ -186,21 +188,26 @@ if (isset($this->session->auth)) {
 
                 var url = "<?= base_url() . "firm_changes" ?>";
 
-                var data = getFormData(form, token, auth_client, user_type);
+                var data = getFormData(form, token, user_key, user_type);
 
-                var auth_data = {
-                    "client_service": encypt("frontend-client"),
-                    "auth_key": encypt("auth_client"),
-                    "token": token,
-                    "user_type": user_type,
-                }
+
                 var request = getAjax(url, data);
                 request.done(function (success) {
                     console.log(success);
                     $('#firmModel').modal('toggle');
                     showNotification('top', 'right', 'add_alert', success["message"], 'success');
                     var url_firm = "<?= base_url() ?>firm_list";
-                    load_table(url_firm, auth_data);
+
+                    var auth_data = {
+                        "client_service": "frontend-client",
+                        "auth_key": "stchexaclan",
+                        "auth_client": auth_client,
+                        "token": token,
+                        "user_type": user_type,
+                        "user_key": user_key,
+                    }
+
+                    load_table(url, data, 'firm_list_tbody', 'firm_list_table');
                 });
                 request.fail(function (error) {
                     console.log(error);

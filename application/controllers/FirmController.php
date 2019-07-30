@@ -16,13 +16,12 @@ class FirmController extends MY_Controller {
     public function index() {
         $data['page_title'] = "Firm";
         $data['load_view'] = array('firm/firm_list_component', 'firm/firm_form_component');
+        $data['session'] = $this->getUserDetails();
         $this->load->view('dashboard', $data);
     }
 
     public function firm_changes() {
-        if (!$this->auth()) {
-            redirect('welcome');
-        } else {
+        if ($this->auth()) {
             $this->getinstance();
 
             if ($this->FirmModel->id == 0) {
@@ -50,10 +49,8 @@ class FirmController extends MY_Controller {
     }
 
     public function firm_list() {
-        if (!$this->auth()) {
-            //redirect('welcome');
-            echo "firm lsit";
-        } else {
+        if ($this->auth()) {
+
             $result = $this->FirmModel->get_query(array('status' => 1));
 
             $rows = "";
@@ -73,7 +70,7 @@ class FirmController extends MY_Controller {
                             . "<td>" . timeago($row->create_at) . "</td>"
                             . "<td>" . timeago($row->update_at) . "</td>"
                             . '<td class="td-actions">
-                           <button type="button" rel="tooltip" class="btn btn-info btn-simple" data-toggle="modal" data-target="#firmModel" data-update_value="' . base64_encode($row->id) . '">
+                           <button type="button" rel="tooltip" class="btn btn-info btn-simple" data-toggle="modal" data-target="#firmModel" data-update_value="' . $row->id . '">
                                 <i class="material-icons">edit</i>
                            </button>
                            <button type="button" rel="tooltip" class="btn btn-danger btn-simple" onclick="firm_delete_by(' . $row->id . ')">
@@ -89,9 +86,10 @@ class FirmController extends MY_Controller {
     }
 
     public function firm_by_id() {
-        if (!$this->auth()) {
-            redirect('welcome');
-        } else {
+
+
+        if ($this->auth()) {
+
             $this->getinstance();
             $result = $this->FirmModel->get_query(array('status' => 1, 'id' => $this->FirmModel->id));
             if (count($result) > 0) {
@@ -105,9 +103,9 @@ class FirmController extends MY_Controller {
     }
 
     public function firm_delete_by() {
-        if (!$this->auth()) {
-            redirect('welcome');
-        } else {
+        if ($this->auth()) {
+
+
             $this->getinstance();
             $this->FirmModel->status = 0;
             $this->FirmModel->update_at = current_date();
@@ -124,41 +122,41 @@ class FirmController extends MY_Controller {
     public function getinstance() {
 
         if (!is_null($this->input->post_get("update_value"))) {
-            $this->FirmModel->id = base64_decode($this->input->post_get("update_value"));
+            $this->FirmModel->id = $this->input->post_get("update_value");
         } else {
             $this->FirmModel->id = 0;
         }
 
         if (!is_null($this->input->post_get("id"))) {
-            $this->FirmModel->id = base64_decode($this->input->post_get("id"));
+            $this->FirmModel->id = $this->input->post_get("id");
         }
 
         if (!is_null($this->input->post_get("name"))) {
-            $this->FirmModel->name = base64_decode($this->input->post_get("name"));
+            $this->FirmModel->name = $this->input->post_get("name");
         }
 
         if (!is_null($this->input->post_get("contact"))) {
-            $this->FirmModel->contact = base64_decode($this->input->post_get("contact"));
+            $this->FirmModel->contact = $this->input->post_get("contact");
         }
 
         if (!is_null($this->input->post_get("email"))) {
-            $this->FirmModel->email = base64_decode($this->input->post_get("email"));
+            $this->FirmModel->email = $this->input->post_get("email");
         }
 
         if (!is_null($this->input->post_get("address"))) {
-            $this->FirmModel->address = base64_decode($this->input->post_get("address"));
+            $this->FirmModel->address = $this->input->post_get("address");
         }
 
         if (!is_null($this->input->post_get("username"))) {
-            $this->FirmModel->username = base64_decode($this->input->post_get("username"));
+            $this->FirmModel->username = $this->input->post_get("username");
         }
 
         if (!is_null($this->input->post_get("password"))) {
-            $this->FirmModel->password = crypt(base64_decode($this->input->post_get("password")), 'stchexaclan');
+            $this->FirmModel->password = crypt($this->input->post_get("password"), 'stchexaclan');
         }
 
         if (!is_null($this->input->post_get("no_of_users"))) {
-            $this->FirmModel->no_of_users = base64_decode($this->input->post_get("no_of_users"));
+            $this->FirmModel->no_of_users = $this->input->post_get("no_of_users");
         }
     }
 

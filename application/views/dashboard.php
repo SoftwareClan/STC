@@ -37,9 +37,27 @@
                 <div class="sidebar-wrapper">
                     <ul class="nav">
                         <li class="nav-item active  ">
-                            <a class="nav-link" href="#0">
+                            <a class="nav-link" href="firm_dashboard">
                                 <i class="material-icons">dashboard</i>
                                 <p>Dashboard</p>
+                            </a>
+                        </li>
+                        <li class="nav-item active  ">
+                            <a class="nav-link" href="user">
+                                <i class="material-icons">person</i>
+                                <p>Users</p>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="target">
+                                <i class="material-icons">scatter_plot</i>
+                                <p>Target</p>
+                            </a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="report">
+                                <i class="material-icons">assessment</i>
+                                <p>Report</p>
                             </a>
                         </li>
                         <!-- your sidebar here -->
@@ -63,7 +81,7 @@
                             <ul class="navbar-nav">
                                 <li class="nav-item">
                                     <a class="nav-link" href="#pablo">
-                                        <i class="material-icons">notifications</i> Notifications
+                                        <i class="material-icons">person</i> <?= $session["name"]; ?>
                                     </a>
                                 </li>
                                 <!-- your navbar here -->

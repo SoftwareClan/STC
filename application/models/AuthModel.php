@@ -13,8 +13,8 @@
  */
 class AuthModel extends CI_Model {
 
-    var $client_service = "frontend-client";
-    var $auth_key = "stchexaclan";
+    private $client_service = "frontend-client";
+    private $auth_key = "stchexaclan";
 
     /*
       | -------------------------------------------------------------------
@@ -29,7 +29,7 @@ class AuthModel extends CI_Model {
         if ($client_service == $this->client_service && $auth_key == $this->auth_key) {
             return true;
         } else {
-            return json_output(401, array('status' => 401, 'message' => 'auth_client not match'));
+            return json_output(401, array('status' => 401, 'message' => 'auth_client not match '));
         }
     }
 
@@ -41,6 +41,7 @@ class AuthModel extends CI_Model {
      */
 
     public function login($uname, $upass) {
+
 
         try {
             $q = $this->db->where('username', $uname)->get('stc_firm')->result();
@@ -159,9 +160,9 @@ class AuthModel extends CI_Model {
             return json_output(401, array('status' => 401, 'message' => 'Unauthorized.'));
         } else {
             if ($q->expired_at < date('Y-m-d H:i:s')) {
-                if ($user_type == "ca") {
+                if ($user_type == "HQ") {
                     $this->logout($users_id, $token);
-                } else if ($user_type == 'tu') {
+                } else if ($user_type == 'CA') {
                     $this->logoutuser($users_id, $token);
                 }
                 return json_output(401, array('status' => 401, 'message' => 'Your session has been expired.'));

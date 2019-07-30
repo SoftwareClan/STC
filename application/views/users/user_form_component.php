@@ -11,7 +11,7 @@
 </style>
 
 <!-- Modal -->
-<div class="modal fade" id="userModel" tabindex="-1" role="dialog" aria-labelledby="userModelLabel" aria-hidden="true">
+<div class="modal fade" id="userModel" tabindex="-1" role="dialog" aria-labelledby="userModelLabel" aria-hidden="true" >
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-body">
@@ -51,8 +51,24 @@
 
     </div>
 </div>
+<?php
+if (isset($this->session->auth)) {
+    $session_data = $this->session->auth;
+    $user_type = $session_data['user_type'];
+    $user_key = $session_data["auth_client"];
+    $token = $session_data['token'];
+    $auth_client = $session_data['auth_client'];
+}
+?>
 <script>
+    var url = "<?= base_url("user_list") ?>";
+
+    var user_type = '<?= $user_type ?>';
+    var token = '<?= $token ?>';
+    var auth_client = '<?= $auth_client ?>';
+    var user_key = '<?= $user_key ?>'
     $(document).ready(function () {
+
 
         $("#user_create_form").validate({
 
@@ -85,32 +101,39 @@
                 }
             },
             submitHandler: function (form) {
-                $('#userModel').modal('toggle');
+
+                var url = "<?= base_url("user_changes") ?>";
+
+                var data = getFormData(form, token, user_key, user_type);
 
 
+                var request = getAjax(url, data);
+                request.done(function (success) {
+                    console.log(success);
+                    $('#userModel').modal('toggle');
+                    showNotification('top', 'right', 'add_alert', success["message"], 'success');
+                    var url_firm = "<?= base_url("user_list") ?>";
 
-                console.log($('#user_create_form').serialize());
+                    var auth_data = {
+                        "client_service": "frontend-client",
+                        "auth_key": "stchexaclan",
+                        "auth_client": auth_client,
+                        "token": token,
+                        "user_type": user_type,
+                        "user_key": user_key,
+                    }
 
-                showNotification('top', 'right', 'add_alert', 'New User Created Successfully', 'success');
+                    load_table(url_firm, data, 'user_table_body', 'userTable');
+                });
+                request.fail(function (error) {
+                    console.log(error);
+                    $('#userModel').modal('toggle');
+                    showNotification('top', 'right', 'add_alert', error["message"], 'danger');
+                });
 
             }
 
 
         })
     });
-
-
-
-    function create_or_update() {
-        $.ajax({
-            url: "",
-            data: "",
-            success: function (response) {
-
-            }
-
-        });
-    }
-
-
 </script>

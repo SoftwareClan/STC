@@ -39,29 +39,36 @@
 if (isset($this->session->auth)) {
     $session_data = $this->session->auth;
     $user_type = $session_data['user_type'];
+    $user_key = $session_data["auth_client"];
     $token = $session_data['token'];
     $auth_client = $session_data['auth_client'];
 }
 ?>
 
-    var url = "<?= base_url() ?>firm_list";
+    var url = "<?= base_url("firm_list") ?>";
     var user_type = '<?= $user_type ?>';
     var token = '<?= $token ?>';
     var auth_client = '<?= $auth_client ?>';
-
+    var user_key = '<?= $user_key ?>'
 
     $(document).ready(function () {
 
 
         var data = {
-            "client_service": encypt("frontend-client"),
-            "auth_key": encypt("auth_client"),
+            "client_service": "frontend-client",
+            "auth_key": "stchexaclan",
             "token": token,
             "user_type": user_type,
+            "user_key": user_key,
             "auth_client": auth_client
         }
-        load_table(url, data);
 
+        load_table(url, data, 'firm_list_tbody', 'firm_list_table');
+        /**
+         *
+         * @param {type} id
+         * @returns {undefined}
+         */
         $('#firmModel').on('show.bs.modal', function (e) {
             var update_value = $(e.relatedTarget).data('update_value');
             if (update_value !== 0) {
@@ -69,7 +76,7 @@ if (isset($this->session->auth)) {
                     type: 'hidden',
                     id: 'update_value',
                     name: 'update_value',
-                    value: dencypt(update_value)
+                    value: update_value
                 }).appendTo('#firm_create_form');
                 get_firm_by_id(update_value);
             }
@@ -84,21 +91,30 @@ if (isset($this->session->auth)) {
     });
 
     function firm_delete_by(value) {
-        var url = "<?= base_url() ?>firm_delete_by";
+        var url = "<?= base_url("firm_delete_by") ?>";
         var data = {
-            "update_value": encypt(value),
-            "client_service": encypt("frontend-client"),
-            "auth_key": encypt("auth_client"),
+            "client_service": "frontend-client",
+            "auth_key": "stchexaclan",
             "token": token,
             "user_type": user_type,
-            "auth_client": auth_client
+            "user_key": user_key,
+            "auth_client": auth_client,
+            "id": value
         }
 
         var response = getAjax(url, data);
         response.done(function (success) {
             showNotification('top', 'right', 'add_alert', success["message"], 'success');
-            var url_list = "<?= base_url() ?>firm_list";
-            load_table(url_list);
+            var url_list = "<?= base_url("firm_list") ?>";
+            var data = {
+                "client_service": "frontend-client",
+                "auth_key": "stchexaclan",
+                "token": token,
+                "user_type": user_type,
+                "user_key": user_key,
+                "auth_client": auth_client
+            }
+            load_table(url, data, 'firm_list_tbody', 'firm_list_table');
         });
         response.fail(function (error) {
             showNotification('top', 'right', 'add_alert', error["message"], 'danger');
@@ -106,14 +122,15 @@ if (isset($this->session->auth)) {
     }
 
     function get_firm_by_id(id) {
-        var url = "<?= base_url() ?>firm_by_id";
+        var url = "<?= base_url("firm_by_id") ?>";
         var data = {
-            "update_value": encypt(id),
-            "client_service": encypt("frontend-client"),
-            "auth_key": encypt("auth_client"),
+            "client_service": "frontend-client",
+            "auth_key": "stchexaclan",
             "token": token,
             "user_type": user_type,
-            "auth_client": auth_client
+            "user_key": user_key,
+            "auth_client": auth_client,
+            "id": id
         }
         var response = getAjax(url, data);
         response.done(function (object) {
@@ -129,4 +146,6 @@ if (isset($this->session->auth)) {
             showNotification('top', 'right', 'add_alert', error["message"], 'danger');
         });
     }
+
+
 </script>

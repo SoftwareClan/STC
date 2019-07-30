@@ -126,7 +126,6 @@
                     rules: {
                         username: {
                             required: true,
-//                            letter_with_underscore: true,
                         },
                         password: {
                             required: true,
@@ -135,23 +134,22 @@
                     messages: {
                         username: {
                             required: "Please Enter User Name",
-                            letter_with_underscore: "Only letter and underscore( _ ) allowed"
                         },
                         password: {
                             required: "Please Enter password",
                         }
                     },
                     submitHandler: function (form) {
-                        var url = "<?= base_url() . "request_to_login" ?>";
-                        var data = getFormData(form, null, null, 'tu');
+                        var url = "<?= base_url("request_to_login") ?>";
+                        var data = getFormData(form, null, null, "HQ");
 
                         var request = getAjax(url, data);
                         request.done(function (success) {
-                            //console.log(success);
-                            window.location = "<?= base_url() ?>" + success;
+
+                            window.location = "<?= base_url("firm") ?>";
                         });
                         request.fail(function (error) {
-                            console.log(error);
+
                             showNotification('top', 'right', 'add_alert', 'Invalid Username and password', 'danger');
                         });
                     }

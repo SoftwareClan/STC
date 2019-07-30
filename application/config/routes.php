@@ -18,4 +18,22 @@ $route['firm_delete_by'] = "FirmController/firm_delete_by";
 
 
 // firm dashboard
-$route['firm_dashboard'] = "FirmDashboardController";
+$route['firm_dashboard'] = "FirmController";
+
+
+// user
+$route['user_dashboard'] = "UserController";
+$route["user"] = "UserController/user";
+$route['user_changes'] = "UserController/user_changes";
+$route['user_list'] = "UserController/user_list";
+$route['user_by_id'] = "UserController/user_by_id";
+$route['user_delete_by'] = "UserController/user_delete_by";
+$route['user_options'] = "UserController/user_options";
+
+$route["target"] = "targetController";
+$route["target/manuallay"] = "targetController/manullay_create";
+$route["target/list_by_type"] = "targetController/get_TargetList_By_type";
+$route["target/by_id"] = "targetController/target_by_id";
+$route["target/delete_by"] = "targetController/target_delete";
+$route["assignTarget"] = "targetController/assignTo";
+$route["target/import_target"] = "targetController/import";
