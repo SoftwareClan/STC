@@ -161,6 +161,60 @@ class TargetController extends MY_Controller {
         }
     }
 
+    function target_by_u_id() {
+        if ($this->auth()) {
+            if (!is_null($this->input->post_get("user_ref"))) {
+                $where = array("call_center.user_ref" => $this->input->post_get("user_ref"), "call_center.status" => 1);
+                $result = $this->CenterModel->getCallCenter($where);
+                $resultData = $result["result"]["message"];
+                $rows = "";
+                if (count($resultData) > 0) {
+                    foreach ($resultData as $row) {
+                        $status = "";
+                        switch ($row->complete_status) {
+                            case 1:$status = "Busy";
+                                break;
+                            case 2:$status = "Switch_off";
+                                break;
+                            case 3:$status = "Not_Received";
+                                break;
+                            case 4:$status = "wrong_number";
+                                break;
+                            case 5:$status = "Call_back";
+                                break;
+                            case 6:$status = "Intrested";
+                                break;
+                            case 7:$status = "Not_Intrested";
+                                break;
+                            default:
+                                break;
+                        }
+                        $rows .= "<tr>"
+                                . "<td>" . $row->name . "</td>"
+                                . "<td>" . $row->number . "</td>"
+                                . "<td>" . $row->source . "</td>"
+                                . "<td>" . $status . "</td>"
+                                . "<td>" . $row->assign_date . "</td>"
+                                . '<td class="td-actions">
+                           <button type="button" rel="tooltip" class="btn btn-info btn-simple" data-toggle="modal" data-target="#call_tracker_Model" data-target_value="' . $row->c_id . '">
+                                <i class="material-icons">view_module</i>
+                           </button>
+                            </td>' .
+                                "</tr>";
+                    }
+                    $data_row["data_table"] = $rows;
+                    echo json_output(200, $data_row);
+                } else {
+                    return 0;
+                }
+            } else {
+                json_output(401, array("message" => "invalid parameter"));
+            }
+        } else {
+            json_output(401, array("message" => "auth error"));
+        }
+    }
+
     function import() {
         if ($this->input->method() == "post") {
             if (isset($_FILES["userfile"]["name"]) && !is_null($this->input->post_get('filename'))) {

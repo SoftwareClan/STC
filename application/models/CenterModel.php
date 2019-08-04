@@ -68,6 +68,16 @@ class CenterModel extends CI_Model {
         }
     }
 
+    public function getCallCenterapi($where) {
+        $resultData = $this->db->select(array("c_id", "name", "number", "source", "assign_date"))
+                        ->where($where)->get('call_center')->result();
+        if (count($resultData) > 0) {
+            return array('status' => 200, 'result' => array('code' => '200', 'message' => $resultData));
+        } else {
+            return array('status' => 200, 'result' => array('code' => '401', 'message' => array()));
+        }
+    }
+
     public function getCallCenter($where) {
         $resultData = $this->db->select(array("call_center.*", "stc_users.u_name as uname"))->from('call_center')
                         ->join('stc_users', "call_center.user_ref=stc_users.u_id", "left")->where($where)->get()->result();

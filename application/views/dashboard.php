@@ -55,11 +55,18 @@
                             </a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link" href="report">
+                            <a class="nav-link" href="target_report">
                                 <i class="material-icons">assessment</i>
-                                <p>Report</p>
+                                <p>Target Report</p>
                             </a>
                         </li>
+                        <!--                        <li class="nav-item active">
+                                                    <a class="nav-link" href="reminder_report">
+                                                        <i class="material-icons">notifications_active</i>
+                                                        <p>Reminder Report</p>
+                                                    </a>
+                                                </li>-->
+
                         <!-- your sidebar here -->
                     </ul>
                 </div>

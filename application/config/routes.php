@@ -37,3 +37,14 @@ $route["target/by_id"] = "targetController/target_by_id";
 $route["target/delete_by"] = "targetController/target_delete";
 $route["assignTarget"] = "targetController/assignTo";
 $route["target/import_target"] = "targetController/import";
+
+
+$route["user_target_report"] = "CallController/getAllUserReport";
+$route["ind_user_target_report"] = "targetController/target_by_u_id";
+$route["target_report"] = "CallController/users_target_panel";
+$route["track_call_log"] = "CallController/callLogs_by_traget_ref";
+$route["reminder_report"] = "ReminderController/reminderReport";
+
+
+
+$route["app_request"] = "AppController";

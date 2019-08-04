@@ -89,7 +89,7 @@ class AuthModel extends CI_Model {
         try {
             $q = $this->db->where('u_number', $uname)->get('stc_users')->result();
 
-            if (count($q) != 1) {
+            if (count($q) == 0) {
                 return array('status' => 401, 'message' => 'Username not found.');
             } else {
                 $hashed_password = $q[0]->mpin;
@@ -109,6 +109,42 @@ class AuthModel extends CI_Model {
                     } else {
                         $this->db->trans_commit();
                         return array('status' => 200, 'message' => 'Successfully login.', 'id' => $id, 'token' => $token);
+                    }
+                } else {
+                    return array('status' => 401, 'message' => 'Wrong password.');
+                }
+            }
+        } catch (Exception $e) {
+            $this->show_error();
+            return array('status' => 401, 'message' => 'db error');
+        }
+    }
+
+    public function loginuserapi($uname, $upass) {
+
+        try {
+            $q = $this->db->where('u_number', $uname)->get('stc_users')->result();
+
+            if (count($q) == 0) {
+                return array('status' => 401, 'message' => 'Username not found.');
+            } else {
+                $hashed_password = $q[0]->mpin;
+                $id = $q[0]->u_id;
+                $name = $q[0]->u_name;
+                if (hash_equals($hashed_password, crypt($upass, $hashed_password))) {
+
+                    $last_login = date('Y-m-d H:i:s');
+                    $token = crypt(substr(md5(rand()), 0, 7), 'stchexaclan');
+                    $expired_at = date("Y-m-d H:i:s", strtotime('+6 hours'));
+                    $this->db->trans_start();
+                    $this->db->where('u_id', $id)->update('stc_users', array('u_log_time' => $last_login));
+                    $this->db->insert('users_authentication', array('users_id' => $id, 'token' => $token, 'expired_at' => $expired_at, 'user_type' => 2));
+                    if ($this->db->trans_status() === FALSE) {
+                        $this->db->trans_rollback();
+                        return array('status' => 500, 'message' => 'Internal server error.');
+                    } else {
+                        $this->db->trans_commit();
+                        return array('status' => 200, 'message' => 'Successfully login.', 'id' => $id, 'token' => $token, "name" => $name);
                     }
                 } else {
                     return array('status' => 401, 'message' => 'Wrong password.');
